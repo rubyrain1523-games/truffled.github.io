@@ -1,89 +1,231 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="png/logo.png"/>
-    <title>Truffled</title>
-    <link rel="stylesheet" href="/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-</head>
-<body class="index-page"> <!-- Add the class here -->
-
-    <div id="loading-screen">
-        <div class="dots">
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-        </div>
-        <h5 id="loading-text">Loading, please wait...</h5>
-    </div>
-
-    <div class="navbar">
-        <div class="navbar-left">
-            <img src="png/logo.svg" alt="Truffled Logo" class="logo">
-            <span class="logo-text">Truffled</span>
-        </div>
-        <div class="navbar-right">
-            <a href="index.html"><img src="png/house-solid.svg" alt="Home"></a>
-            <a href="games.html"><img src="png/gamepad-solid.svg" alt="Games"></a>
-            <a href="apps.html"><img src="png/apps.svg" alt="Apps"></a>
-            <a href="other.html"><img src="png/other.svg" alt="Other"></a>
-            <a href="settings.html"><img src="png/gear-solid.svg" alt="Settings"></a>
-        </div>
-    </div>
-
-    <div class="content">
-        <h1>Welcome to truffled</h1>
-        <p>Games with your Desire!</p>
-
-        <form id="uv-form">
-            <input id="uv-search-engine" value="https://www.google.com/search?q=%s" type="hidden"/>
-            <input id="uv-address" type="text" placeholder="Search..." class="search-bar">
-        </form>
-        <div class="desc left-margin">
-            <p id="uv-error"></p>
-            <pre id="uv-error-code"></pre>
-        </div>
-        <div class="button-container"></div>
-        <button class="button" onclick="openIframe()">Cloaker</button>
-        <button class="sigma" onclick="window.open('https://discord.gg/MgAVPggThx', '_blank')">Discord</button>
-    </div>
-
-    <script src="/static/uv/uv.bundle.js" defer></script>
-    <script src="/static/uv/uv.config.js" defer></script>
-    <script src="/static/register-sw.js" defer></script>
-    <script src="/static/search.js" defer></script>
-    <script src="/static/index.js" defer></script>
-    <script src="/loading.js"></script>
-    
-    <script>
-        function openIframe() {
-            const newWindow = window.open('about:blank');
-            const iframe = newWindow.document.createElement('iframe');
-            iframe.src = '/'; 
-            iframe.style.width = '100%';
-            iframe.style.height = '100%';
-            iframe.style.border = 'none';
-            newWindow.document.body.appendChild(iframe);
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f4ee">
+    <meta name="description" content="RubyGames: browse and launch all 59 games hosted here.">
+    <title>RubyGames | The Arcade</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --paper: #f5f4ee;
+            --ink: #202720;
+            --muted: #74796e;
+            --line: #d9dbd0;
+            --green: #c9f36a;
+            --card: #fffefa;
+            --red: #d9533d;
         }
-    </script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8970459375287677" crossorigin="anonymous"></script>
-    <script src="/js/panic.js"></script>
-    <script src="loading.js"></script>
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            background-color: var(--paper);
+            background-image: radial-gradient(#c9cbbf 0.65px, transparent 0.65px);
+            background-size: 18px 18px;
+            font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+        }
+
+        .shell { width: min(1100px, calc(100% - 40px)); margin: 0 auto; }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 76px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .brand, .eyebrow, .count, .search-label, .game-number {
+            font-family: "DM Mono", "SFMono-Regular", Consolas, monospace;
+            text-transform: uppercase;
+        }
+
+        .brand { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; }
+        .edition { color: var(--muted); font-size: 12px; }
+
+        main { padding: 68px 0 88px; }
+
+        .intro {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: end;
+            gap: 24px;
+            padding-bottom: 32px;
+        }
+
+        .eyebrow { margin: 0 0 14px; color: var(--red); font-size: 11px; font-weight: 700; }
+        h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(48px, 8vw, 86px); font-weight: 400; line-height: 0.98; }
+        .intro-note { max-width: 210px; margin: 0 0 5px; color: var(--muted); font-size: 14px; line-height: 1.55; }
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            min-height: 70px;
+            border-top: 1px solid var(--ink);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .search-wrap { display: flex; align-items: center; gap: 14px; flex: 1; }
+        .search-label { flex: none; color: var(--muted); font-size: 10px; font-weight: 700; }
+        #search {
+            width: 100%;
+            max-width: 420px;
+            padding: 12px 0;
+            border: 0;
+            outline: 0;
+            color: var(--ink);
+            background: transparent;
+            font: inherit;
+            font-size: 15px;
+        }
+        #search::placeholder { color: #9a9d93; }
+        #search:focus-visible { box-shadow: 0 2px 0 var(--ink); }
+        .count { flex: none; color: var(--muted); font-size: 10px; }
+        .count strong { color: var(--ink); font-size: 12px; }
+
+        .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line); border-bottom: 1px solid var(--line); }
+        .game {
+            display: flex;
+            min-height: 112px;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            color: inherit;
+            background: var(--card);
+            text-decoration: none;
+            transition: background-color 150ms ease, transform 150ms ease;
+        }
+        .game:hover, .game:focus-visible { position: relative; z-index: 1; background: var(--green); outline: none; }
+        .game:active { transform: scale(0.985); }
+        .game-number { display: grid; width: 34px; height: 34px; flex: none; place-items: center; border: 1px solid var(--line); border-radius: 50%; color: var(--muted); font-size: 9px; }
+        .game-name { flex: 1; font-family: Georgia, "Times New Roman", serif; font-size: 19px; line-height: 1.2; }
+        .arrow { color: var(--red); font-size: 19px; transition: transform 150ms ease; }
+        .game:hover .arrow, .game:focus-visible .arrow { transform: translate(3px, -3px); }
+
+        #empty { display: none; padding: 34px 0; color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: 20px; }
+        footer { display: flex; justify-content: space-between; gap: 16px; padding-top: 18px; color: var(--muted); font-family: "DM Mono", "SFMono-Regular", Consolas, monospace; font-size: 10px; text-transform: uppercase; }
+
+        @media (max-width: 760px) {
+            main { padding-top: 46px; }
+            .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .game { min-height: 100px; padding: 16px 14px; gap: 11px; }
+            .game-name { font-size: 17px; }
+        }
+
+        @media (max-width: 500px) {
+            .shell { width: min(100% - 28px, 1100px); }
+            header { min-height: 62px; }
+            .intro { grid-template-columns: 1fr; gap: 14px; padding-bottom: 24px; }
+            .intro-note { max-width: 290px; }
+            .toolbar { align-items: flex-start; flex-direction: column; justify-content: center; gap: 0; padding: 12px 0; }
+            .search-wrap { width: 100%; }
+            .count { padding-left: 63px; }
+            .grid { grid-template-columns: 1fr; }
+            .game { min-height: 76px; padding: 13px 16px; }
+            footer { flex-wrap: wrap; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <header>
+            <div class="brand">RubyGames</div>
+            <div class="edition">THE LOCAL ARCADE / 01</div>
+        </header>
+        <main>
+            <section class="intro" aria-labelledby="title">
+                <div>
+                      <p class="eyebrow">Pick a game, jump in</p>
+                      <h1 id="title">RubyGames.</h1>
+                </div>
+                <p class="intro-note">A little collection of games, ready when you are.</p>
+            </section>
+            <section aria-label="Game library">
+                <div class="toolbar">
+                    <label class="search-wrap" for="search">
+                        <span class="search-label">Find</span>
+                        <input id="search" type="search" placeholder="Search games..." autocomplete="off">
+                    </label>
+                    <div class="count" aria-live="polite"><strong id="visible-count">59</strong> / <span id="total-count">59</span> games</div>
+                </div>
+                <div class="grid" id="games"></div>
+                <p id="empty">No games found. Try another search.</p>
+            </section>
+        </main>
+        <footer><span>All games hosted locally</span><span id="footer-count">59 titles</span></footer>
+    </div>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-      
-        gtag('config', 'G-WLTG1S4STB');
-      </script>
-      
+        const games = [
+            ["1", "1"], ["1v1lol", "1v1.LOL"], ["2048", "2048"],
+            ["MonkeyMart", "Monkey Mart"], ["Rocket-League", "Rocket League"],
+            ["a-dance-of-fire-and-ice", "A Dance of Fire and Ice"], ["among-us", "Among Us"],
+            ["baldis-basics", "Baldi's Basics"], ["basket-random", "Basket Random"],
+            ["bitlife", "BitLife"], ["blockblast", "Block Blast"], ["bloonstd", "Bloons TD"],
+            ["btd5", "Bloons TD 5"], ["cookie-clicker", "Cookie Clicker"],
+            ["csgo-clicker", "CSGO Clicker"], ["death-run-3d", "Death Run 3D"],
+            ["drift-boss", "Drift Boss"], ["drift-hunters", "Drift Hunters"],
+            ["drive-mad", "Drive Mad"], ["ducklife1", "Duck Life 1"], ["eggycar", "Eggy Car"],
+            ["fnaf", "Five Nights at Freddy's"], ["fruitninja", "Fruit Ninja"],
+            ["funmayhem", "Fun Mayhem"], ["getaway-shootout", "Getaway Shootout"],
+            ["gta3", "GTA 3"], ["idle-breakout", "Idle Breakout"],
+            ["jetpackjoyride", "Jetpack Joyride"], ["krunker", "Krunker"],
+            ["learntofly", "Learn to Fly"], ["learntofly2", "Learn to Fly 2"],
+            ["ltf3", "Learn to Fly 3"], ["minecraft", "Minecraft"],
+            ["minecraft-18", "Minecraft 1.8"], ["motox3m", "Moto X3M"], ["n-gon", "N-Gon"],
+            ["osu!", "osu!"], ["ovo", "OvO"], ["paperio2", "Paper.io 2"],
+            ["pixel-gun-survival", "Pixel Gun Survival"], ["pizzatower", "Pizza Tower"],
+            ["rbcollege", "Retro Bowl College"], ["retro-bowl", "Retro Bowl"],
+            ["riddleschool", "Riddle School"], ["run", "Run 3"], ["slope", "Slope"],
+            ["sm64", "Super Mario 64"], ["smashkarts", "Smash Karts"],
+            ["soccer-random", "Soccer Random"], ["stickman-hook", "Stickman Hook"],
+            ["subway-surfers", "Subway Surfers"], ["superhot", "SUPERHOT"],
+            ["tetris", "Tetris"], ["theimpossiblequiz", "The Impossible Quiz"],
+            ["tiny-fishing", "Tiny Fishing"], ["tombofthemask", "Tomb of the Mask"],
+            ["vex", "Vex"], ["watermelongame", "Watermelon Game"],
+            ["worlds-hardest-game", "World's Hardest Game"]
+        ];
+
+        const grid = document.getElementById("games");
+        const search = document.getElementById("search");
+        const visibleCount = document.getElementById("visible-count");
+        const emptyMessage = document.getElementById("empty");
+
+        games.sort((first, second) => first[1].localeCompare(second[1]));
+        document.getElementById("total-count").textContent = games.length;
+        document.getElementById("footer-count").textContent = `${games.length} titles`;
+
+        const cards = games.map(([slug, name], index) => {
+            const link = document.createElement("a");
+            link.className = "game";
+            link.href = `games/${encodeURIComponent(slug)}/`;
+            link.dataset.name = name.toLowerCase();
+            link.innerHTML = `<span class="game-number">${String(index + 1).padStart(2, "0")}</span><span class="game-name"></span><span class="arrow" aria-hidden="true">↗</span>`;
+            link.querySelector(".game-name").textContent = name;
+            grid.append(link);
+            return link;
+        });
+
+        search.addEventListener("input", () => {
+            const query = search.value.trim().toLowerCase();
+            let shown = 0;
+            for (const card of cards) {
+                const matches = card.dataset.name.includes(query);
+                card.hidden = !matches;
+                if (matches) shown++;
+            }
+            visibleCount.textContent = shown;
+            emptyMessage.style.display = shown ? "none" : "block";
+        });
+    </script>
 </body>
 </html>
-
-
-<meta property="og:title" content="Truffled">
-<meta property="og:description" content="Truffled is an online game site offering interactive games & apps to play!">
-<meta property="og:image" content="/png/logo.png"> 
-<meta property="og:url" content="https://truffled.lol">
